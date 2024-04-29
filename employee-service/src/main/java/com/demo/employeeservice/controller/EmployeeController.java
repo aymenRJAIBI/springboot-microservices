@@ -1,5 +1,6 @@
 package com.demo.employeeservice.controller;
 
+import com.demo.employeeservice.dto.APIResponseDto;
 import com.demo.employeeservice.dto.EmployeeDto;
 import com.demo.employeeservice.service.EmployeeService;
 import lombok.AllArgsConstructor;
@@ -23,8 +24,8 @@ public class EmployeeController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<EmployeeDto> getEmployee(@PathVariable("id") Long employeeId){
-        EmployeeDto employeeDto = employeeService.getEmployeeById(employeeId);
+    public ResponseEntity<APIResponseDto> getEmployee(@PathVariable("id") Long employeeId){
+        APIResponseDto employeeDto = employeeService.getEmployeeById(employeeId);
         return  new ResponseEntity<>(employeeDto, HttpStatus.OK);
 
     }
