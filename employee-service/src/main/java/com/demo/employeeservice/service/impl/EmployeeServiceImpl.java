@@ -6,6 +6,7 @@ import com.demo.employeeservice.dto.DepartmentDto;
 import com.demo.employeeservice.dto.EmployeeDto;
 import com.demo.employeeservice.entity.Employee;
 import com.demo.employeeservice.repository.EmployeeRepository;
+import com.demo.employeeservice.service.APIClient;
 import com.demo.employeeservice.service.EmployeeService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -22,6 +23,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private ModelMapper mapper;
     private RestTemplate restTemplate;
     private WebClient webClient;
+    private APIClient apiClient;
 
 
 
@@ -42,7 +44,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = findEmployeeByIdOrThrow(employeeId);
         // TODO CODE REFACTOR FOR CONST AND ALL THE METHOD GET EMPLOYEE
 
-        DepartmentDto departmentDto = getDepartmentDetailsWithWebClient(employee);
+        DepartmentDto departmentDto = apiClient.getDepartment(employee.getDepartmentCode());
 
         EmployeeDto employeeDto =mapEmployeeToDto(employee);
 
