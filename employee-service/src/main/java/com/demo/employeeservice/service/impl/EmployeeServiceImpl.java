@@ -4,10 +4,13 @@ import com.demo.employeeservice.config.ApiConstants;
 import com.demo.employeeservice.dto.APIResponseDto;
 import com.demo.employeeservice.dto.DepartmentDto;
 import com.demo.employeeservice.dto.EmployeeDto;
+import com.demo.employeeservice.dto.OrganizationDto;
 import com.demo.employeeservice.entity.Employee;
 import com.demo.employeeservice.repository.EmployeeRepository;
 import com.demo.employeeservice.service.APIClient;
 import com.demo.employeeservice.service.EmployeeService;
+import com.demo.employeeservice.service.OrganizationClient;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     private WebClient webClient;
     private APIClient apiClient;
 
+    private OrganizationClient organizationClient;
+
 
 
 
@@ -38,6 +43,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         return mapper.map(savedEmployee, EmployeeDto.class);
     }
 
+    @CircuitBreaker(name="${spring.application.name}",fallbackMethod = "getDefaultDepartment")
     @Override
     public APIResponseDto getEmployeeById(Long employeeId) {
 
@@ -45,12 +51,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         // TODO CODE REFACTOR FOR CONST AND ALL THE METHOD GET EMPLOYEE
 
         DepartmentDto departmentDto = apiClient.getDepartment(employee.getDepartmentCode());
+        OrganizationDto organizationDto = organizationClient.getOrganization(employee.getOrganizationCode());
 
         EmployeeDto employeeDto =mapEmployeeToDto(employee);
 
         APIResponseDto apiResponseDto = new APIResponseDto();
         apiResponseDto.setEmployeeDto(employeeDto);
         apiResponseDto.setDepartmentDto(departmentDto);
+        apiResponseDto.setOrganizationDto(organizationDto);
         return apiResponseDto;
     }
 
